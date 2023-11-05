@@ -51,9 +51,9 @@ def start_advertising(key, interval_ms=2000):
     print(f"payload ({len(adv):2}) {adv.hex()}")
 
     # Set BLE address
-    run_hci_cmd(["0x3f", "0x001"] + bytes_to_strarray(addr, with_prefix=True)[::-1])
-    subprocess.run(["systemctl", "restart", "bluetooth"])
-    time.sleep(1)
+    subprocess.run(["hciconfig", "hci0", "down"])
+    subprocess.run(["btmgmt", "public-addr", addr.hex(":")])
+    subprocess.run(["hciconfig", "hci0", "up"])
 
     # Set BLE advertisement payload
     run_hci_cmd(["0x08", "0x0008"] + [format(len(adv), "x")] + bytes_to_strarray(adv))
